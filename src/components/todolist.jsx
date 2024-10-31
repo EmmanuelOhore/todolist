@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import InputFields from "./comon/inputFeiild";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Pagination from "./comon/pagination";
 import "../styles/todo.css";
 import { Parginate } from "../utils/parginate";
@@ -24,8 +26,15 @@ class TodoList extends Component {
     this.setState({ list: updatedlist, inputtedTodo: "" });
   };
 
-  handleInputChange = (e) => {
-    this.setState({ inputtedTodo: e.currentTarget.value });
+  handleInputChange = ({ currentTarget: input }) => {
+    if (input.value.length > 30) {
+      return (
+        toast.error("you have reached the character limit"),
+        this.setState({ inputtedTodo: "" })
+      );
+    } else {
+      this.setState({ inputtedTodo: input.value });
+    }
   };
 
   handleDelete = (id) => {
@@ -67,75 +76,79 @@ class TodoList extends Component {
     const newlist = Parginate(list, currentPage, pageSize);
 
     return (
-      <div className="todo-body">
-        <div className="todo-container">
-          <header>
-            <h1>
-              TO<span>DO</span>
-            </h1>
-          </header>
-          <div className="todo-selector">
-            <p>Personal</p>
-          </div>
-          <div className="list-section">
-            <form onSubmit={this.handleAddTodo}>
-              <InputFields
-                onchange={this.handleInputChange}
-                type="text"
-                required={true}
-                name="inputTodo"
-                value={inputtedTodo}
-              />
-              <button>ADD</button>
-            </form>
+      <>
+        <ToastContainer />
+        <div className="todo-body">
+          <div className="todo-container">
+            <header>
+              <h1>
+                TO<span>DO</span>
+              </h1>
+            </header>
+            <div className="todo-selector">
+              <p>Personal</p>
+            </div>
+            <div className="list-section">
+              <form onSubmit={this.handleAddTodo}>
+                <InputFields
+                  onchange={this.handleInputChange}
+                  type="text"
+                  required={true}
+                  name="inputTodo"
+                  value={inputtedTodo}
+                />
+                <button>ADD</button>
+              </form>
 
-            <div className="todo-list-cotent">
-              {list.length === 0 ? (
-                <h1 className="error-h1">There Are No Todos</h1>
-              ) : (
-                newlist.map((content) => {
-                  return (
-                    <ol key={content.id}>
-                      <li className={this.handlestrike(content)}>
-                        {" "}
-                        <input
-                          onChange={() => this.handlecheck(content)}
-                          type="checkbox"
-                          name="checbox"
-                          value={content.id}
-                        />
-                        {content.item}
-                        <i
-                          onClick={() => this.handleDelete(content.id)}
-                          class="fa-regular fa-trash-can"
-                        ></i>
-                      </li>
-                    </ol>
-                  );
-                })
-              )}
-              <div className="todo-btn-container">
-                <button onClick={this.handleTickAll}>
-                  {" "}
-                  <i class="fa-solid fa-check"></i> Tick All
-                </button>
-                <button onClick={this.handleClearAll}>
-                  {" "}
-                  <i class="fa-solid fa-arrow-right-from-bracket"></i> Clear All
-                </button>
+              <div className="todo-list-cotent">
+                {list.length === 0 ? (
+                  <h1 className="error-h1">There Are No Todos</h1>
+                ) : (
+                  newlist.map((content) => {
+                    return (
+                      <ol key={content.id}>
+                        <li className={this.handlestrike(content)}>
+                          {" "}
+                          <input
+                            onChange={() => this.handlecheck(content)}
+                            type="checkbox"
+                            name="checbox"
+                            value={content.id}
+                          />
+                          {content.item}
+                          <i
+                            onClick={() => this.handleDelete(content.id)}
+                            class="fa-regular fa-trash-can"
+                          ></i>
+                        </li>
+                      </ol>
+                    );
+                  })
+                )}
+                <div className="todo-btn-container">
+                  <button onClick={this.handleTickAll}>
+                    {" "}
+                    <i class="fa-solid fa-check"></i> Tick All
+                  </button>
+                  <button onClick={this.handleClearAll}>
+                    {" "}
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Clear
+                    All
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="pagination-todo">
-            <Pagination
-              listCount={list.length}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-              pageSize={pageSize}
-            />
+            <div className="pagination-todo">
+              <Pagination
+                listCount={list.length}
+                currentPage={currentPage}
+                onPageChange={this.handlePageChange}
+                pageSize={pageSize}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }
