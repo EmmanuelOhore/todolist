@@ -11,6 +11,7 @@ class TodoList extends Component {
     inputtedTodo: "",
     currentPage: 1,
     pageSize: 3,
+    currentselected: "",
   };
 
   handleAddTodo = (e) => {
@@ -70,9 +71,13 @@ class TodoList extends Component {
   handlePageChange = (pageNumber) => {
     this.setState({ currentPage: pageNumber });
   };
+  handleselecteditem = (e) => {
+    this.setState({ currentselected: e.target.value });
+  };
 
   render() {
-    const { list, inputtedTodo, currentPage, pageSize } = this.state;
+    const { list, inputtedTodo, currentPage, pageSize, currentselected } =
+      this.state;
     const newlist = Parginate(list, currentPage, pageSize);
 
     return (
@@ -136,6 +141,14 @@ class TodoList extends Component {
                     All
                   </button>
                 </div>
+                <select
+                  value={currentselected}
+                  onChange={this.handleselecteditem}
+                >
+                  <option value="all">All</option>
+                  <option value="checked">Checked </option>
+                  <option value="alphabetical">Alpebetical</option>
+                </select>
               </div>
             </div>
             <div className="pagination-todo">
